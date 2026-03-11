@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Voter Registration</title>
+</head>
+<body>
+
+<h2>Voter Registration</h2>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<label>Name</label><br>
+<input type="text" name="name"><br><br>
+
+<label>Voter ID</label><br>
+<input type="text" name="voter_id"><br><br>
+
+<label>Face Image</label><br>
+<input type="file" name="face"><br><br>
+
+<label>Iris Image</label><br>
+<input type="file" name="iris"><br><br>
+
+<button type="submit">Register</button>
+
+</form>
+
+</body>
+</html>

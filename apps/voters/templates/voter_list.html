@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Registered Voters</h2>
+
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Voter ID</th>
+<th>Face</th>
+<th>Iris</th>
+</tr>
+
+{% for voter in voters %}
+<tr>
+<td>{{ voter.name }}</td>
+<td>{{ voter.voter_id }}</td>
+<td><img src="{{ voter.face.url }}" width="100"></td>
+<td><img src="{{ voter.iris.url }}" width="100"></td>
+</tr>
+{% endfor %}
+
+</table>
+</body>
+</html>
