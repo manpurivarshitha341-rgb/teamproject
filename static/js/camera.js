@@ -1,25 +1,36 @@
 const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const capture = document.getElementById("capture");
 
-navigator.mediaDevices.getUserMedia({video:true})
-.then(stream=>{
-video.srcObject=stream;
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(function(stream) {
+    video.srcObject = stream;
 })
-.catch(err=>{
-console.log("Camera error:",err);
+.catch(function(error) {
+    console.log("Camera error:", error);
 });
+function capture(){
 
-capture.addEventListener("click",function(){
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
 
-const context = canvas.getContext("2d");
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
 
-context.drawImage(video,0,0,320,240);
+const ctx = canvas.getContext("2d");
+
+ctx.drawImage(video,0,0);
 
 const image = canvas.toDataURL("image/png");
 
-document.getElementById("captured_image").value=image;
-
-alert("Face Captured");
-
+fetch("/voting/verify/",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({image:image})
+})
+.then(res=>res.json())
+.then(data=>{
+alert(data.message);
 });
+
+}

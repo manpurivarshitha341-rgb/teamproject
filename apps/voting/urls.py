@@ -2,6 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+
     path('', views.vote, name='vote'),
+
+    path('start/', views.vote, name='start_vote'),
+
     path('results/', views.results, name='results'),
+
 ]

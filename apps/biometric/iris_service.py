@@ -1,31 +1,96 @@
 import cv2
-import os
+import numpy as np
 
-def match_iris(captured_file):
 
-    voters_dir = "media/voters/"
-    captured_img = cv2.imread(captured_file, cv2.IMREAD_GRAYSCALE)
+def preprocess_eye(image_path):
+    """
+    Read image and convert to grayscale for iris detection
+    """
 
-    if captured_img is None:
-        return False, "No iris image captured"
+    img = cv2.imread(image_path)
 
-    for file in os.listdir(voters_dir):
+    if img is None:
+        return None
 
-        if "iris" not in file.lower():
-            continue
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        path = os.path.join(voters_dir, file)
-        voter_img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    # reduce noise
+    gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
-        if voter_img is None:
-            continue
+    return gray
 
-        voter_img = cv2.resize(voter_img, (captured_img.shape[1], captured_img.shape[0]))
 
-        result = cv2.matchTemplate(captured_img, voter_img, cv2.TM_CCOEFF_NORMED)
-        _, max_val, _, _ = cv2.minMaxLoc(result)
+def detect_iris(image_path):
+    """
+    Detect iris circle using Hough Circle Transform
+    """
 
-        if max_val > 0.7:
-            return True, file
+    gray = preprocess_eye(image_path)
 
-    return False, "No iris match"
+    if gray is None:
+        return False
+
+    circles = cv2.HoughCircles(
+        gray,
+        cv2.HOUGH_GRADIENT,
+        dp=1.5,
+        minDist=50,
+        param1=100,
+        param2=30,
+        minRadius=20,
+        maxRadius=80
+    )
+
+    if circles is not None:
+        return True
+    else:
+        return False
+
+
+def extract_iris_region(image_path):
+    """
+    Extract the iris region from the image
+    """
+
+    img = cv2.imread(image_path)
+
+    if img is None:
+        return None
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    circles = cv2.HoughCircles(
+        gray,
+        cv2.HOUGH_GRADIENT,
+        dp=1.5,
+        minDist=50,
+        param1=100,
+        param2=30,
+        minRadius=20,
+        maxRadius=80
+    )
+
+    if circles is None:
+        return None
+
+    circles = np.uint16(np.around(circles))
+
+    for x, y, r in circles[0]:
+        iris = img[y-r:y+r, x-r:x+r]
+        return iris
+
+    return None
+
+
+def verify_iris(stored_image, captured_image):
+    """
+    Basic iris verification by detecting iris in both images
+    """
+
+    iris1 = detect_iris(stored_image)
+    iris2 = detect_iris(captured_image)
+
+    if iris1 and iris2:
+        return True
+    else:
+        return False

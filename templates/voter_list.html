@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Voter List</title>
+</head>
+
+<body>
+
+<h2>Registered Voters</h2>
+
+{% for v in voters %}
+<p>{{v.name}} - {{v.aadhar}}</p>
+{% endfor %}
+
+</body>
+</html>

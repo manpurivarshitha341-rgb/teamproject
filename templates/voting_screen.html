@@ -1,56 +1,119 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Biometric Voting System</title>
-</head>
+    <title>Start Voting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
+        .container {
+            background: white;
+            padding: 30px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #90caf9;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #64b5f6;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .message {
+            text-align: center;
+            color: green;
+            margin-top: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #555;
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        a:hover {
+            color: #333;
+        }
+    </style>
+</head>
 <body>
 
-<h2>Biometric Voting System</h2>
+<div class="container">
+    <h2>🗳 Start Voting</h2>
 
-<h3>Live Camera</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="voter_id" placeholder="Enter Voter ID" required>
 
-<video id="video" width="400" height="300" autoplay></video>
+        <select name="candidate" required>
+            <option value="">Select Candidate</option>
+            {% for c in candidates %}
+                <option value="{{ c.id }}">{{ c.name }} - {{ c.party }}</option>
+            {% endfor %}
+        </select>
 
-<br><br>
+        <video id="video" autoplay></video>
 
-<button id="capture">Capture Face</button>
+        <button type="submit">Submit Vote</button>
+    </form>
 
-<canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+    {% if message %}
+    <p class="message">{{ message }}</p>
+    {% endif %}
 
-<form method="POST">
+    <a href="/">Back to Dashboard</a>
+</div>
 
-{% csrf_token %}
+<script>
+    // Open camera
+    const video = document.getElementById("video");
 
-<input type="hidden" id="captured_image" name="captured_image">
-
-<br><br>
-
-Enter Voter ID
-<input type="text" name="voter_id">
-
-<br><br>
-
-Select Candidate
-<select name="candidate">
-
-{% for c in candidates %}
-<option value="{{c.id}}">
-{{c.name}} - {{c.party}}
-</option>
-{% endfor %}
-
-</select>
-
-<br><br>
-
-<button type="submit">Vote</button>
-
-</form>
-
-<script src="{% static 'js/camera.js' %}"></script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            console.log("Camera error:", err);
+        });
+</script>
 
 </body>
 </html>

@@ -1,27 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h2>Biometric Voting System</h2>
 
-<p>{{message}}</p>
+<title>Vote</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+
+<div class="container">
+
+<a class="navbar-brand" href="/vote/">Voting</a>
+
+<a class="text-white" href="/vote/results/">Results</a>
+
+</div>
+
+</nav>
+
+<div class="container mt-5">
+
+<h2 class="text-center mb-4">Biometric Voting System</h2>
+
+<div class="card p-4 shadow">
+
+<p class="text-danger">{{message}}</p>
 
 <form method="POST">
 
 {% csrf_token %}
 
-<label>Enter Voter ID</label>
-<input type="text" name="voter_id">
+<div class="mb-3">
+<label class="form-label">Enter Voter ID</label>
+<input type="text" name="voter_id" class="form-control">
+</div>
 
-<br><br>
+<div class="mb-3">
+<label class="form-label">Select Candidate</label>
 
-<label>Select Candidate</label>
-
-<select name="candidate">
+<select name="candidate" class="form-control">
 
 {% for c in candidates %}
 
@@ -33,10 +53,17 @@
 
 </select>
 
-<br><br>
+</div>
 
-<button type="submit">Vote</button>
+<button class="btn btn-success w-100">
+Submit Vote
+</button>
 
 </form>
+
+</div>
+
+</div>
+
 </body>
 </html>

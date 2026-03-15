@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Biometric Voting System</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    background:#ffffff;
+    padding:40px;
+    border-radius:20px;
+    text-align:center;
+    width:420px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.1);
+}
+
+h1{
+    margin-bottom:30px;
+    color:#444;
+}
+
+.btn{
+    display:block;
+    padding:14px;
+    margin:15px 0;
+    text-decoration:none;
+    font-size:18px;
+    border-radius:12px;
+    color:#333;
+    font-weight:500;
+    transition:0.3s;
+}
+
+/* buttons colors */
+
+.register{
+    background:#c8e6c9;
+}
+
+.register:hover{
+    background:#a5d6a7;
+}
+
+.vote{
+    background:#bbdefb;
+}
+
+.vote:hover{
+    background:#90caf9;
+}
+
+.results{
+    background:#ffe0b2;
+}
+
+.results:hover{
+    background:#ffcc80;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🗳 Biometric Voting System</h1>
+
+<a href="/voters/register/" class="btn register">Register Voter</a>
+
+<a href="/voting/start/" class="btn vote">Start Voting</a>
+
+<a href="/voting/results/" class="btn results">View Results</a>
+
+</div>
+
+</body>
+</html>

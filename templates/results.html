@@ -1,68 +1,83 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Election Results</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Voting Results</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f5f9ff;
+    text-align:center;
+}
+
+.container{
+    width:650px;
+    margin:auto;
+    margin-top:60px;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 0 10px #ddd;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+</style>
+
 </head>
-<body class="bg-light">
 
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="/vote/">Voting</a>
-        <a class="text-white" href="/vote/results/">Results</a>
-    </div>
-</nav>
+<body>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Election Results</h2>
+<div class="container">
 
-    <table class="table table-bordered table-striped">
-        <tr class="table-dark">
-            <th>Candidate</th>
-            <th>Party</th>
-            <th>Total Votes</th>
-        </tr>
-        {% for r in data %}
-        <tr>
-            <td>{{ r.name }}</td>
-            <td>{{ r.party }}</td>
-            <td>{{ r.votes }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<h2>📈 Voting Results</h2>
 
-    <h3 class="mt-5">Vote Chart</h3>
-    <canvas id="voteChart"></canvas>
+<canvas id="lineChart"></canvas>
+
+<br><br>
+
+<a href="/">Back to Dashboard</a>
+
 </div>
 
 <script>
-const labels = [
-{% for r in data %}
-    "{{ r.name }}"{% if not loop.last %},{% endif %}
-{% endfor %}
-];
 
-const votes = [
-{% for r in data %}
-    {{ r.votes }}{% if not loop.last %},{% endif %}
-{% endfor %}
-];
+const names = JSON.parse('{{ names|escapejs }}');
+const votes = JSON.parse('{{ votes|escapejs }}');
 
-const ctx = document.getElementById("voteChart").getContext('2d');
+new Chart(document.getElementById("lineChart"),{
 
-new Chart(ctx, {
-    type: "bar",
-    data: {
-        labels: labels,
-        datasets: [{
-            label: "Votes",
-            data: votes
-        }]
-    }
+type:'line',
+
+data:{
+labels:names,
+datasets:[{
+label:'Votes',
+data:votes,
+borderColor:'#64b5f6',
+backgroundColor:'#bbdefb',
+fill:true,
+tension:0.3
+}]
+},
+
+options:{
+scales:{
+y:{
+beginAtZero:true
+}
+}
+}
+
 });
+
 </script>
+
 </body>
 </html>
