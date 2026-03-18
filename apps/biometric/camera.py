@@ -1,25 +1,21 @@
 import cv2
 
-def capture_face_image(filename="face_capture.jpg"):
-    cam = cv2.VideoCapture(0)
-    cv2.namedWindow("Capture Face")
+def capture_face():
+
+    camera = cv2.VideoCapture(0)
 
     while True:
-        ret, frame = cam.read()
-        if not ret:
-            print("Failed to grab frame")
-            break
-        cv2.imshow("Capture Face", frame)
+        ret, frame = camera.read()
 
-        k = cv2.waitKey(1)
-        if k % 256 == 27:  # ESC pressed
-            print("Escape hit, closing...")
-            break
-        elif k % 256 == 32:  # SPACE pressed
-            cv2.imwrite(filename, frame)
-            print(f"{filename} saved!")
+        cv2.imshow("Face Scan - Press S", frame)
+
+        key = cv2.waitKey(1)
+
+        if key == ord('s'):
+            cv2.imwrite("captured_face.jpg", frame)
             break
 
-    cam.release()
+    camera.release()
     cv2.destroyAllWindows()
-    return filename
+
+    return "captured_face.jpg"

@@ -1,83 +1,18 @@
-{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-<title>Voting Results</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-
-body{
-    font-family: Arial;
-    background:#f5f9ff;
-    text-align:center;
-}
-
-.container{
-    width:650px;
-    margin:auto;
-    margin-top:60px;
-    background:white;
-    padding:30px;
-    border-radius:10px;
-    box-shadow:0 0 10px #ddd;
-}
-
-h2{
-    margin-bottom:20px;
-}
-
-</style>
-
+<title>Results</title>
 </head>
 
 <body>
 
-<div class="container">
+<h2>Voting Results</h2>
 
-<h2>📈 Voting Results</h2>
+{% for r in results %}
 
-<canvas id="lineChart"></canvas>
+<p>{{ r.candidate__name }} : {{ r.total }} votes</p>
 
-<br><br>
-
-<a href="/">Back to Dashboard</a>
-
-</div>
-
-<script>
-
-const names = JSON.parse('{{ names|escapejs }}');
-const votes = JSON.parse('{{ votes|escapejs }}');
-
-new Chart(document.getElementById("lineChart"),{
-
-type:'line',
-
-data:{
-labels:names,
-datasets:[{
-label:'Votes',
-data:votes,
-borderColor:'#64b5f6',
-backgroundColor:'#bbdefb',
-fill:true,
-tension:0.3
-}]
-},
-
-options:{
-scales:{
-y:{
-beginAtZero:true
-}
-}
-}
-
-});
-
-</script>
+{% endfor %}
 
 </body>
 </html>

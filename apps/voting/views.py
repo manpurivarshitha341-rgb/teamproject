@@ -1,101 +1,79 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.core.files.base import ContentFile
-
-from .models import Candidate, Vote
-from apps.voters.models import Voter
-
-from apps.biometric.face_service import match_face
-from apps.biometric.hybrid_matcher import verify_voter
-
-import base64
-import json
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import Candidate
 
 
-# Voting Page
+# Landing page
 def vote(request):
-
     candidates = Candidate.objects.all()
-    message = ""
 
+    return render(request, "voting/vote.html", {
+        "candidates": candidates
+    })
+
+
+# Optional start page (same as landing)
+def start_vote(request):
+    return render(request, "voting/start.html")
+
+
+# Scan voter face/iris
+def scan_face(request):
     if request.method == "POST":
+        # TEMP: Set True for testing
+        voter_valid = True  
 
-        voter_id = request.POST.get("voter_id")
-        candidate_id = request.POST.get("candidate")
-        image_data = request.POST.get("captured_image")
+        if voter_valid:
+            candidates = Candidate.objects.all()
 
-        try:
-            voter = Voter.objects.get(voter_id=voter_id)
+            return render(request, "voting/submit_vote.html", {
+                "candidates": candidates
+            })
+        else:
+            return render(request, "voting/scan_face.html", {
+                "error": "Invalid voter"
+            })
 
-            if voter.has_voted:
-                message = "You already voted"
-                return render(request, "voting_screen.html", {"candidates": candidates, "message": message})
-
-            # Convert base64 image
-            format, imgstr = image_data.split(';base64,')
-            captured = ContentFile(base64.b64decode(imgstr), name='capture.png')
-
-            # Face verification
-            if match_face(voter.face_image.path, captured):
-
-                candidate = Candidate.objects.get(id=candidate_id)
-
-                Vote.objects.create(
-                    voter=voter,
-                    candidate=candidate
-                )
-
-                voter.has_voted = True
-                voter.save()
-
-                message = "Biometric verified. Vote submitted!"
-
-            else:
-                message = "Face not matched"
-
-        except:
-            message = "Invalid voter ID"
-
-    return render(request, "voting_screen.html", {"candidates": candidates, "message": message})
+    return render(request, "voting/scan_face.html")
 
 
-# Results Page
-def results(request):
+# Submit the vote
+def submit_vote(request):
+    if request.method == "POST":
+        selected_candidate = request.POST.get("candidate")
 
+        if selected_candidate:
+            # 👉 You can store vote here later
+
+            return redirect('results')
+        else:
+            candidates = Candidate.objects.all()
+
+            return render(request, "voting/submit_vote.html", {
+                "candidates": candidates,
+                "error": "Please select a candidate"
+            })
+
+    # If user comes directly without POST
     candidates = Candidate.objects.all()
 
-    data = []
+    return render(request, "voting/submit_vote.html", {
+        "candidates": candidates
+    })
 
-    for c in candidates:
-        count = Vote.objects.filter(candidate=c).count()
-        data.append({
-            "name": c.name,
-            "party": c.party,
-            "votes": count
+
+# Show voting results
+def results(request):
+    candidates = Candidate.objects.all()
+
+    results_data = []
+    for candidate in candidates:
+        results_data.append({
+            "name": candidate.name,
+            "party": candidate.party,
+            "votes": 0  # You can update later with real count
         })
 
-    return render(request, "results.html", {"data": data})
-
-
-# Face + Iris Verification API
-def verify(request):
-
-    data = json.loads(request.body)
-    image = data["image"]
-
-    # Save captured image
-    format, imgstr = image.split(';base64,')
-    imgdata = base64.b64decode(imgstr)
-
-    with open("media/captured.png", "wb") as f:
-        f.write(imgdata)
-
-    result = verify_voter(
-        "media/voter_images/registered.png",
-        "media/captured.png"
-    )
-
-    if result:
-        return JsonResponse({"message": "Verification Success"})
-    else:
-        return JsonResponse({"message": "Verification Failed"})
+    return render(request, "voting/results.html", {
+        "results": results_data
+    })

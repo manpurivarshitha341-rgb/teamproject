@@ -11,16 +11,22 @@ def register_voter(request):
     if request.method == "POST":
         name = request.POST.get("name")
         voter_id = request.POST.get("voter_id")
-
-        face_image = request.FILES.get("face_image")
-        iris_image = request.FILES.get("iris_image")
+        age = request.POST.get("age")
+        gender= request.POST.get("gender")
 
         Voter.objects.create(
-            name=name,
-            voter_id=voter_id,
-            face_image=face_image,
-            iris_image=iris_image
-        )
+    voter_id=voter_id,
+    name=name,
+      age=age,
+     gender=gender
+)
+
+    
+
+        
+
+
+        
 
     return render(request, "voter_register.html")
 

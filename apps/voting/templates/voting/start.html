@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Face</title>
+</head>
+<body>
+    <h2>Face Scan</h2>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="snap">Capture</button>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <form id="faceForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="image" id="imageInput">
+        <button type="submit">Submit Face</button>
+    </form>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+        const imageInput = document.getElementById('imageInput');
+
+        // Access webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                alert('Cannot access camera: ' + err);
+            });
+
+        // Capture image
+        snap.addEventListener('click', () => {
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/png');
+            imageInput.value = dataURL;  // send to server
+            alert('Face captured! Now submit.');
+        });
+    </script>
+</body>
+</html>
